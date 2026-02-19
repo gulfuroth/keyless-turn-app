@@ -1,0 +1,113 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Tenant {
+  id                   String   @id @default(cuid())
+  name                 String
+  mygServer            String
+  mygDatabase          String
+  encryptedMygCreds    String
+  encryptedKeylessCreds String?
+  status               String   @default("active")
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  devices      Device[]
+  keylessUsers KeylessUser[]
+  reservations Reservation[]
+  commandLogs  CommandLog[]
+}
+
+model Device {
+  id           String   @id @default(cuid())
+  tenantId     String
+  mygDeviceId  String
+  serialNumber String
+  name         String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  tenant       Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  reservations Reservation[]
+
+  @@unique([tenantId, mygDeviceId])
+  @@unique([tenantId, serialNumber])
+}
+
+model KeylessUser {
+  id              String   @id @default(cuid())
+  tenantId        String
+  mygUserId       String?
+  mygDriverId     String?
+  userReference   String
+  name            String
+  email           String?
+  isDriver        Boolean  @default(false)
+  inKeylessGroup  Boolean  @default(false)
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  tenant          Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  reservations    Reservation[]
+
+  @@unique([tenantId, userReference])
+}
+
+model Reservation {
+  id          String   @id @default(cuid())
+  tenantId    String
+  userId      String
+  deviceId    String
+  startAt     DateTime
+  endAt       DateTime
+  status      String   @default("scheduled")
+  createdBy   String?
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tenant      Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user        KeylessUser @relation(fields: [userId], references: [id], onDelete: Restrict)
+  device      Device     @relation(fields: [deviceId], references: [id], onDelete: Restrict)
+  virtualKeys VirtualKey[]
+
+  @@index([tenantId, startAt, endAt])
+}
+
+model VirtualKey {
+  id                String   @id @default(cuid())
+  tenantId          String
+  reservationId     String
+  deviceSerial      String
+  userReference     String
+  beginningTimestamp DateTime
+  endingTimestamp    DateTime
+  virtualKeyId      String?
+  status            String   @default("pending")
+  requestPayload    Json?
+  responsePayload   Json?
+  createdAt         DateTime @default(now())
+
+  reservation       Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+}
+
+model CommandLog {
+  id             String   @id @default(cuid())
+  tenantId       String
+  reservationId  String?
+  deviceSerial   String
+  commandType    String
+  requestPayload Json?
+  responsePayload Json?
+  status         String
+  sentAt         DateTime @default(now())
+
+  tenant         Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+}

@@ -25,12 +25,22 @@ Un usuario será seleccionable si cumple al menos una de estas condiciones:
 - `docs/03-data-model.md`
 - `docs/04-api-contract.md`
 - `docs/05-delivery-plan.md`
+- `docs/06-bootstrap.md`
 
-## Próximo hito
+## Scaffold inicial (creado)
 
-Scaffold del monorepo:
+- Monorepo npm workspaces:
+  - `apps/web` (Next.js)
+  - `apps/api` (Node.js + TypeScript + Fastify)
+  - `packages/shared`
+  - `prisma` (PostgreSQL schema base)
 
-- `apps/web` (Next.js)
-- `apps/api` (Node.js + TypeScript + Fastify)
-- `packages/shared`
-- `prisma` (PostgreSQL)
+## Endpoint inicial disponible
+
+- `POST /api/tenants/sync/eligible`
+  - `mode=mock`: responde catálogo de ejemplo.
+  - `mode=real`: preparado para MyGeotab real (authenticate + devices + users/drivers + grupo `Keyless_Driver`).
+
+## Siguiente hito
+
+Persistencia de tenant/sync en DB + UI web de configuración del tenant y ejecución de sincronización.
