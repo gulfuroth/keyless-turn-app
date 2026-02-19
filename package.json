@@ -9,7 +9,12 @@
   "scripts": {
     "dev:api": "npm --workspace @keyless-turn/api run dev",
     "dev:web": "npm --workspace @keyless-turn/web run dev",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev --name init",
     "build": "npm run build -ws",
     "typecheck": "npm run typecheck -ws"
+  },
+  "devDependencies": {
+    "prisma": "^5.22.0"
   }
 }

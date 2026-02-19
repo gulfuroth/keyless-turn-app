@@ -1,12 +1,15 @@
 import { FastifyInstance } from "fastify";
 import { z } from "zod";
 import { syncEligibleCatalog } from "../services/mygeotab-client.js";
+import { upsertTenantAndCatalog } from "../services/sync-persistence.js";
 
 const syncBodySchema = z.object({
   mygServer: z.string().min(1),
   mygDatabase: z.string().min(1),
   mygUserName: z.string().min(1),
   mygPassword: z.string().min(1),
+  tenantName: z.string().min(1).optional(),
+  persist: z.boolean().default(true),
   mode: z.enum(["real", "mock"]).default("real")
 });
 
@@ -45,17 +48,32 @@ export async function syncRoutes(app: FastifyInstance): Promise<void> {
     }
 
     const body = parsed.data;
+    const connection = {
+      mygServer: body.mygServer,
+      mygDatabase: body.mygDatabase,
+      mygUserName: body.mygUserName,
+      mygPassword: body.mygPassword
+    };
+
     if (body.mode === "mock") {
+      const persisted = body.persist
+        ? await upsertTenantAndCatalog(connection, mockResult, body.tenantName)
+        : null;
       return {
         source: "mock",
+        persisted,
         ...mockResult
       };
     }
 
     try {
-      const data = await syncEligibleCatalog(body);
+      const data = await syncEligibleCatalog(connection);
+      const persisted = body.persist
+        ? await upsertTenantAndCatalog(connection, data, body.tenantName)
+        : null;
       return {
         source: "mygeotab",
+        persisted,
         ...data
       };
     } catch (err) {

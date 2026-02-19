@@ -5,8 +5,9 @@
 - `POST /tenants/:tenantId/test-connection`
 
 ## Sync
-- `POST /tenants/:tenantId/sync/devices`
-- `POST /tenants/:tenantId/sync/users`
+- `POST /api/tenants/sync/eligible`
+  - Input: credenciales MyGeotab + `mode` + `persist`
+  - Output: `devices`, `users` y bloque `persisted` con `tenantId` y contadores
 
 ## Catalogs
 - `GET /tenants/:tenantId/devices`

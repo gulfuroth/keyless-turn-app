@@ -22,6 +22,8 @@ model Tenant {
   keylessUsers KeylessUser[]
   reservations Reservation[]
   commandLogs  CommandLog[]
+
+  @@unique([mygServer, mygDatabase])
 }
 
 model Device {

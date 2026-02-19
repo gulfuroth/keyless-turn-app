@@ -6,7 +6,15 @@
 npm install
 ```
 
-## 2) API
+## 2) Prisma
+
+```bash
+cp .env.example .env
+npm run db:generate
+npm run db:migrate
+```
+
+## 3) API
 
 ```bash
 npm run dev:api
@@ -18,7 +26,7 @@ Health:
 curl -s http://localhost:8081/health
 ```
 
-Mock eligible sync:
+Mock eligible sync + persistencia:
 
 ```bash
 curl -s -X POST http://localhost:8081/api/tenants/sync/eligible \
@@ -28,19 +36,30 @@ curl -s -X POST http://localhost:8081/api/tenants/sync/eligible \
     "mygDatabase":"demo",
     "mygUserName":"user@example.com",
     "mygPassword":"***",
-    "mode":"mock"
+    "tenantName":"Demo Tenant",
+    "mode":"mock",
+    "persist":true
   }'
 ```
 
-## 3) Web
+Real eligible sync (MyGeotab):
+
+```bash
+curl -s -X POST http://localhost:8081/api/tenants/sync/eligible \
+  -H 'content-type: application/json' \
+  -d '{
+    "mygServer":"my.geotab.com",
+    "mygDatabase":"your_db",
+    "mygUserName":"admin@domain.com",
+    "mygPassword":"***",
+    "tenantName":"Your Tenant",
+    "mode":"real",
+    "persist":true
+  }'
+```
+
+## 4) Web
 
 ```bash
 npm run dev:web
-```
-
-## 4) Prisma (next step)
-
-```bash
-npx prisma generate
-npx prisma migrate dev --name init
 ```
