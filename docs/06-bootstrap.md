@@ -42,24 +42,21 @@ curl -s -X POST http://localhost:8081/api/tenants/sync/eligible \
   }'
 ```
 
-Real eligible sync (MyGeotab):
+Catálogo persistido:
 
 ```bash
-curl -s -X POST http://localhost:8081/api/tenants/sync/eligible \
-  -H 'content-type: application/json' \
-  -d '{
-    "mygServer":"my.geotab.com",
-    "mygDatabase":"your_db",
-    "mygUserName":"admin@domain.com",
-    "mygPassword":"***",
-    "tenantName":"Your Tenant",
-    "mode":"real",
-    "persist":true
-  }'
+curl -s http://localhost:8081/api/tenants
+curl -s http://localhost:8081/api/tenants/<tenantId>/catalog
 ```
 
 ## 4) Web
 
 ```bash
 npm run dev:web
+```
+
+Para que la web apunte a otro host API en server-side render:
+
+```bash
+API_BASE_URL=http://localhost:8081 npm run dev:web
 ```

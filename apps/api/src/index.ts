@@ -1,11 +1,13 @@
 import Fastify from "fastify";
 import { healthRoutes } from "./routes/health.js";
 import { syncRoutes } from "./routes/sync.js";
+import { catalogRoutes } from "./routes/catalog.js";
 
 const app = Fastify({ logger: true });
 
 app.register(healthRoutes);
 app.register(syncRoutes, { prefix: "/api" });
+app.register(catalogRoutes, { prefix: "/api" });
 
 const port = Number(process.env.PORT || 8081);
 

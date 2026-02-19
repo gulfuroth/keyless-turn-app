@@ -9,9 +9,9 @@
   - Input: credenciales MyGeotab + `mode` + `persist`
   - Output: `devices`, `users` y bloque `persisted` con `tenantId` y contadores
 
-## Catalogs
-- `GET /tenants/:tenantId/devices`
-- `GET /tenants/:tenantId/users?eligible=true`
+## Catalog (from DB)
+- `GET /api/tenants`
+- `GET /api/tenants/:tenantId/catalog`
 
 ## Reservations
 - `POST /tenants/:tenantId/reservations`
